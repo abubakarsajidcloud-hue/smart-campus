@@ -1,0 +1,22 @@
+# Stage 1: Build (optional, for future React/build tools)
+FROM nginx:alpine
+
+# Copy nginx config
+COPY nginx.conf /etc/nginx/nginx.conf
+
+# Copy frontend static files
+COPY index.html /usr/share/nginx/html/
+COPY .env /usr/share/nginx/html/.env
+
+# Create directories for logs
+RUN mkdir -p /var/log/nginx /var/cache/nginx
+
+# Expose port
+EXPOSE 80
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=10s --start-period=10s --retries=3 \
+  CMD wget --quiet --tries=1 --spider http://localhost/health || exit 1
+
+# Start nginx
+CMD ["nginx", "-g", "daemon off;"]

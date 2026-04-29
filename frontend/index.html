@@ -1,0 +1,820 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Smart Campus System</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    header {
+      background: rgba(255, 255, 255, 0.95);
+      padding: 20px;
+      border-radius: 10px;
+      margin-bottom: 30px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    }
+
+    header h1 {
+      color: #667eea;
+      margin-bottom: 10px;
+      font-size: 2.5em;
+    }
+
+    header p {
+      color: #666;
+      font-size: 1.1em;
+    }
+
+    .dashboard {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 20px;
+      margin-bottom: 30px;
+    }
+
+    .stat-card {
+      background: white;
+      padding: 25px;
+      border-radius: 10px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+      text-align: center;
+      transition: transform 0.3s ease;
+    }
+
+    .stat-card:hover {
+      transform: translateY(-5px);
+    }
+
+    .stat-card h3 {
+      color: #999;
+      font-size: 0.9em;
+      margin-bottom: 10px;
+      text-transform: uppercase;
+    }
+
+    .stat-card .value {
+      color: #667eea;
+      font-size: 2.5em;
+      font-weight: bold;
+    }
+
+    .tabs {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+
+    .tab-button {
+      padding: 12px 24px;
+      background: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 1em;
+      font-weight: 600;
+      color: #667eea;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+      transition: all 0.3s ease;
+    }
+
+    .tab-button.active {
+      background: #667eea;
+      color: white;
+    }
+
+    .tab-content {
+      display: none;
+      background: white;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 8px;
+      color: #333;
+      font-weight: 600;
+    }
+
+    .form-group input,
+    .form-group select {
+      width: 100%;
+      padding: 12px;
+      border: 2px solid #ddd;
+      border-radius: 5px;
+      font-size: 1em;
+      transition: border-color 0.3s ease;
+    }
+
+    .form-group input:focus,
+    .form-group select:focus {
+      outline: none;
+      border-color: #667eea;
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 20px;
+    }
+
+    button {
+      background: #667eea;
+      color: white;
+      padding: 12px 30px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 1em;
+      font-weight: 600;
+      transition: background 0.3s ease;
+    }
+
+    button:hover {
+      background: #764ba2;
+    }
+
+    button.danger {
+      background: #e74c3c;
+    }
+
+    button.danger:hover {
+      background: #c0392b;
+    }
+
+    .table-container {
+      overflow-x: auto;
+      margin-top: 20px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+
+    th {
+      background: #667eea;
+      color: white;
+      padding: 15px;
+      text-align: left;
+      font-weight: 600;
+    }
+
+    td {
+      padding: 15px;
+      border-bottom: 1px solid #eee;
+    }
+
+    tr:hover {
+      background: #f9f9f9;
+    }
+
+    .action-buttons {
+      display: flex;
+      gap: 10px;
+    }
+
+    .btn-small {
+      padding: 8px 15px;
+      font-size: 0.9em;
+    }
+
+    .alert {
+      padding: 15px;
+      border-radius: 5px;
+      margin-bottom: 20px;
+      display: none;
+    }
+
+    .alert.success {
+      background: #d4edda;
+      color: #155724;
+      border: 1px solid #c3e6cb;
+      display: block;
+    }
+
+    .alert.error {
+      background: #f8d7da;
+      color: #721c24;
+      border: 1px solid #f5c6cb;
+      display: block;
+    }
+
+    .loading {
+      text-align: center;
+      padding: 20px;
+      color: #667eea;
+    }
+
+    .no-data {
+      text-align: center;
+      padding: 40px;
+      color: #999;
+      font-style: italic;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 5px 12px;
+      border-radius: 20px;
+      font-size: 0.85em;
+      font-weight: 600;
+    }
+
+    .badge.a {
+      background: #d4edda;
+      color: #155724;
+    }
+
+    .badge.b {
+      background: #cfe2ff;
+      color: #084298;
+    }
+
+    .badge.c {
+      background: #e2e3e5;
+      color: #383d41;
+    }
+
+    .badge.f {
+      background: #f8d7da;
+      color: #721c24;
+    }
+
+    @media (max-width: 768px) {
+      .dashboard {
+        grid-template-columns: 1fr;
+      }
+
+      .form-row {
+        grid-template-columns: 1fr;
+      }
+
+      header h1 {
+        font-size: 1.8em;
+      }
+
+      table {
+        font-size: 0.9em;
+      }
+
+      th, td {
+        padding: 10px 5px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>📚 Smart Campus System</h1>
+      <p>Student Management • Exam Tracking • Attendance & Fines • Dashboard Analytics</p>
+    </header>
+
+    <div class="alert" id="alert"></div>
+
+    <!-- Dashboard Stats -->
+    <div class="dashboard" id="dashboard"></div>
+
+    <!-- Navigation Tabs -->
+    <div class="tabs">
+      <button class="tab-button active" onclick="switchTab('students')">👥 Students</button>
+      <button class="tab-button" onclick="switchTab('exams')">📝 Exams</button>
+      <button class="tab-button" onclick="switchTab('attendance')">📋 Attendance</button>
+      <button class="tab-button" onclick="switchTab('report')">📊 Reports</button>
+    </div>
+
+    <!-- Students Tab -->
+    <div id="students" class="tab-content active">
+      <h2>Student Management</h2>
+      <form onsubmit="addStudent(event)">
+        <div class="form-row">
+          <div class="form-group">
+            <label>Full Name *</label>
+            <input type="text" id="fullname" required>
+          </div>
+          <div class="form-group">
+            <label>Semester *</label>
+            <input type="number" id="semester" min="1" max="8" required>
+          </div>
+          <div class="form-group">
+            <label>Phone</label>
+            <input type="text" id="phone_no">
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Email</label>
+            <input type="email" id="email">
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Subject 1</label>
+            <input type="text" id="subject1">
+          </div>
+          <div class="form-group">
+            <label>Subject 2</label>
+            <input type="text" id="subject2">
+          </div>
+          <div class="form-group">
+            <label>Subject 3</label>
+            <input type="text" id="subject3">
+          </div>
+          <div class="form-group">
+            <label>Subject 4</label>
+            <input type="text" id="subject4">
+          </div>
+          <div class="form-group">
+            <label>Subject 5</label>
+            <input type="text" id="subject5">
+          </div>
+          <div class="form-group">
+            <label>Subject 6</label>
+            <input type="text" id="subject6">
+          </div>
+        </div>
+        <button type="submit">➕ Add Student</button>
+        <button type="button" onclick="resetForm()">🔄 Reset</button>
+      </form>
+
+      <div class="table-container">
+        <h3 style="margin-top: 30px;">Students List</h3>
+        <div id="studentsList"></div>
+      </div>
+    </div>
+
+    <!-- Exams Tab -->
+    <div id="exams" class="tab-content">
+      <h2>Exam Management</h2>
+      <form onsubmit="addExam(event)">
+        <div class="form-row">
+          <div class="form-group">
+            <label>Student ID *</label>
+            <input type="number" id="exam_student_id" required>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Subject 1 Marks</label>
+            <input type="number" id="exam_subject1" min="0" max="100">
+          </div>
+          <div class="form-group">
+            <label>Subject 2 Marks</label>
+            <input type="number" id="exam_subject2" min="0" max="100">
+          </div>
+          <div class="form-group">
+            <label>Subject 3 Marks</label>
+            <input type="number" id="exam_subject3" min="0" max="100">
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Subject 4 Marks</label>
+            <input type="number" id="exam_subject4" min="0" max="100">
+          </div>
+          <div class="form-group">
+            <label>Subject 5 Marks</label>
+            <input type="number" id="exam_subject5" min="0" max="100">
+          </div>
+          <div class="form-group">
+            <label>Subject 6 Marks</label>
+            <input type="number" id="exam_subject6" min="0" max="100">
+          </div>
+        </div>
+        <button type="submit">➕ Add Exam</button>
+      </form>
+
+      <div class="table-container">
+        <h3 style="margin-top: 30px;">Exams List</h3>
+        <div id="examsList"></div>
+      </div>
+    </div>
+
+    <!-- Attendance Tab -->
+    <div id="attendance" class="tab-content">
+      <h2>Attendance & Fines Management</h2>
+      <form onsubmit="addAttendance(event)">
+        <div class="form-row">
+          <div class="form-group">
+            <label>Student ID *</label>
+            <input type="number" id="att_student_id" required>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Subject 1 Attendance %</label>
+            <input type="number" id="att_subject1" min="0" max="100">
+          </div>
+          <div class="form-group">
+            <label>Subject 2 Attendance %</label>
+            <input type="number" id="att_subject2" min="0" max="100">
+          </div>
+          <div class="form-group">
+            <label>Subject 3 Attendance %</label>
+            <input type="number" id="att_subject3" min="0" max="100">
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Subject 4 Attendance %</label>
+            <input type="number" id="att_subject4" min="0" max="100">
+          </div>
+          <div class="form-group">
+            <label>Subject 5 Attendance %</label>
+            <input type="number" id="att_subject5" min="0" max="100">
+          </div>
+          <div class="form-group">
+            <label>Subject 6 Attendance %</label>
+            <input type="number" id="att_subject6" min="0" max="100">
+          </div>
+        </div>
+        <button type="submit">➕ Add Attendance Record</button>
+      </form>
+
+      <div class="table-container">
+        <h3 style="margin-top: 30px;">Attendance Records</h3>
+        <div id="attendanceList"></div>
+      </div>
+    </div>
+
+    <!-- Report Tab -->
+    <div id="report" class="tab-content">
+      <h2>Student Reports & Analytics</h2>
+      <button onclick="generateReport()" style="margin-bottom: 20px;">🔄 Generate Report</button>
+      <div id="reportContainer"></div>
+    </div>
+  </div>
+
+  <script>
+    const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
+
+    // Utility Functions
+    function showAlert(message, type = 'success') {
+      const alertEl = document.getElementById('alert');
+      alertEl.textContent = message;
+      alertEl.className = `alert ${type}`;
+      setTimeout(() => {
+        alertEl.className = 'alert';
+      }, 5000);
+    }
+
+    function switchTab(tabName) {
+      // Hide all tabs
+      document.querySelectorAll('.tab-content').forEach(tab => {
+        tab.classList.remove('active');
+      });
+      document.querySelectorAll('.tab-button').forEach(btn => {
+        btn.classList.remove('active');
+      });
+
+      // Show selected tab
+      document.getElementById(tabName).classList.add('active');
+      event.target.classList.add('active');
+
+      // Load data when tab is opened
+      if (tabName === 'students') loadStudents();
+      else if (tabName === 'exams') loadExams();
+      else if (tabName === 'attendance') loadAttendance();
+      else if (tabName === 'report') generateReport();
+    }
+
+    // Dashboard
+    async function loadDashboard() {
+      try {
+        const response = await fetch(`${API_BASE_URL}/dashboard/stats`);
+        const data = await response.json();
+        const dashboard = document.getElementById('dashboard');
+        dashboard.innerHTML = `
+          <div class="stat-card">
+            <h3>Total Students</h3>
+            <div class="value">${data.total_students || 0}</div>
+          </div>
+          <div class="stat-card">
+            <h3>Average Grade</h3>
+            <div class="value">${parseFloat(data.avg_grade || 0).toFixed(2)}</div>
+          </div>
+          <div class="stat-card">
+            <h3>Total Fines Collected</h3>
+            <div class="value">PKR ${(data.total_fine || 0).toLocaleString()}</div>
+          </div>
+        `;
+      } catch (error) {
+        console.error('Dashboard Error:', error);
+        showAlert('Failed to load dashboard', 'error');
+      }
+    }
+
+    // Students Management
+    async function addStudent(e) {
+      e.preventDefault();
+      const data = {
+        fullname: document.getElementById('fullname').value,
+        semester: document.getElementById('semester').value,
+        phone_no: document.getElementById('phone_no').value,
+        email: document.getElementById('email').value,
+        subject1: document.getElementById('subject1').value,
+        subject2: document.getElementById('subject2').value,
+        subject3: document.getElementById('subject3').value,
+        subject4: document.getElementById('subject4').value,
+        subject5: document.getElementById('subject5').value,
+        subject6: document.getElementById('subject6').value,
+      };
+
+      try {
+        const response = await fetch(`${API_BASE_URL}/students`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(data)
+        });
+        if (response.ok) {
+          showAlert('✅ Student added successfully');
+          resetForm();
+          loadStudents();
+        }
+      } catch (error) {
+        showAlert('❌ Failed to add student', 'error');
+      }
+    }
+
+    async function loadStudents() {
+      try {
+        const response = await fetch(`${API_BASE_URL}/students`);
+        const students = await response.json();
+        let html = students.length === 0 ? '<p class="no-data">No students found</p>' : `
+          <table>
+            <thead>
+              <tr>
+                <th>Roll No</th>
+                <th>Name</th>
+                <th>Semester</th>
+                <th>Phone</th>
+                <th>Email</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${students.map(s => `
+                <tr>
+                  <td><strong>${s.roll_no}</strong></td>
+                  <td>${s.fullname}</td>
+                  <td>${s.semester}</td>
+                  <td>${s.phone_no || '-'}</td>
+                  <td>${s.email || '-'}</td>
+                  <td>
+                    <div class="action-buttons">
+                      <button class="btn-small" onclick="editStudent(${s.id})">✏️ Edit</button>
+                      <button class="btn-small danger" onclick="deleteStudent(${s.id})">🗑️ Delete</button>
+                    </div>
+                  </td>
+                </tr>
+              `).join('')}
+            </tbody>
+          </table>
+        `;
+        document.getElementById('studentsList').innerHTML = html;
+      } catch (error) {
+        document.getElementById('studentsList').innerHTML = '<p class="no-data">Error loading students</p>';
+      }
+    }
+
+    async function deleteStudent(id) {
+      if (!confirm('Are you sure?')) return;
+      try {
+        await fetch(`${API_BASE_URL}/students/${id}`, { method: 'DELETE' });
+        showAlert('✅ Student deleted');
+        loadStudents();
+      } catch (error) {
+        showAlert('❌ Failed to delete', 'error');
+      }
+    }
+
+    function resetForm() {
+      document.querySelectorAll('input').forEach(input => input.value = '');
+    }
+
+    function editStudent(id) {
+      showAlert('Edit feature coming soon...', 'success');
+    }
+
+    // Exams Management
+    async function addExam(e) {
+      e.preventDefault();
+      const data = {
+        student_id: document.getElementById('exam_student_id').value,
+        subject1: parseFloat(document.getElementById('exam_subject1').value) || 0,
+        subject2: parseFloat(document.getElementById('exam_subject2').value) || 0,
+        subject3: parseFloat(document.getElementById('exam_subject3').value) || 0,
+        subject4: parseFloat(document.getElementById('exam_subject4').value) || 0,
+        subject5: parseFloat(document.getElementById('exam_subject5').value) || 0,
+        subject6: parseFloat(document.getElementById('exam_subject6').value) || 0,
+      };
+
+      try {
+        const response = await fetch(`${API_BASE_URL}/exams`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(data)
+        });
+        if (response.ok) {
+          showAlert('✅ Exam added successfully');
+          document.querySelectorAll('#exams input').forEach(input => input.value = '');
+          loadExams();
+        }
+      } catch (error) {
+        showAlert('❌ Failed to add exam', 'error');
+      }
+    }
+
+    async function loadExams() {
+      try {
+        const response = await fetch(`${API_BASE_URL}/exams`);
+        const exams = await response.json();
+        let html = exams.length === 0 ? '<p class="no-data">No exams found</p>' : `
+          <table>
+            <thead>
+              <tr>
+                <th>Student ID</th>
+                <th>S1</th>
+                <th>S2</th>
+                <th>S3</th>
+                <th>S4</th>
+                <th>S5</th>
+                <th>S6</th>
+                <th>Total</th>
+                <th>Percentage</th>
+                <th>Grade</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${exams.map(e => `
+                <tr>
+                  <td>${e.student_id}</td>
+                  <td>${e.subject1}</td>
+                  <td>${e.subject2}</td>
+                  <td>${e.subject3}</td>
+                  <td>${e.subject4}</td>
+                  <td>${e.subject5}</td>
+                  <td>${e.subject6}</td>
+                  <td><strong>${e.total || 0}</strong></td>
+                  <td>${parseFloat(e.percentage || 0).toFixed(2)}%</td>
+                  <td><span class="badge ${e.grade?.toLowerCase()}">${e.grade || 'N/A'}</span></td>
+                </tr>
+              `).join('')}
+            </tbody>
+          </table>
+        `;
+        document.getElementById('examsList').innerHTML = html;
+      } catch (error) {
+        document.getElementById('examsList').innerHTML = '<p class="no-data">Error loading exams</p>';
+      }
+    }
+
+    // Attendance Management
+    async function addAttendance(e) {
+      e.preventDefault();
+      const data = {
+        student_id: document.getElementById('att_student_id').value,
+        subject1: parseFloat(document.getElementById('att_subject1').value) || 0,
+        subject2: parseFloat(document.getElementById('att_subject2').value) || 0,
+        subject3: parseFloat(document.getElementById('att_subject3').value) || 0,
+        subject4: parseFloat(document.getElementById('att_subject4').value) || 0,
+        subject5: parseFloat(document.getElementById('att_subject5').value) || 0,
+        subject6: parseFloat(document.getElementById('att_subject6').value) || 0,
+      };
+
+      try {
+        const response = await fetch(`${API_BASE_URL}/attendance`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(data)
+        });
+        if (response.ok) {
+          showAlert('✅ Attendance record added');
+          document.querySelectorAll('#attendance input').forEach(input => input.value = '');
+          loadAttendance();
+        }
+      } catch (error) {
+        showAlert('❌ Failed to add attendance', 'error');
+      }
+    }
+
+    async function loadAttendance() {
+      try {
+        const response = await fetch(`${API_BASE_URL}/attendance`);
+        const records = await response.json();
+        let html = records.length === 0 ? '<p class="no-data">No attendance records</p>' : `
+          <table>
+            <thead>
+              <tr>
+                <th>Student ID</th>
+                <th>S1%</th>
+                <th>S2%</th>
+                <th>S3%</th>
+                <th>S4%</th>
+                <th>S5%</th>
+                <th>S6%</th>
+                <th>Total Fine</th>
+                <th>Dropout Subjects</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${records.map(r => `
+                <tr>
+                  <td>${r.student_id}</td>
+                  <td>${r.subject1}%</td>
+                  <td>${r.subject2}%</td>
+                  <td>${r.subject3}%</td>
+                  <td>${r.subject4}%</td>
+                  <td>${r.subject5}%</td>
+                  <td>${r.subject6}%</td>
+                  <td><strong>PKR ${r.total_fine || 0}</strong></td>
+                  <td>${r.dropout_subjects || 'None'}</td>
+                </tr>
+              `).join('')}
+            </tbody>
+          </table>
+        `;
+        document.getElementById('attendanceList').innerHTML = html;
+      } catch (error) {
+        document.getElementById('attendanceList').innerHTML = '<p class="no-data">Error loading records</p>';
+      }
+    }
+
+    // Reports
+    async function generateReport() {
+      try {
+        const response = await fetch(`${API_BASE_URL}/dashboard/report`);
+        const report = await response.json();
+        let html = report.length === 0 ? '<p class="no-data">No data available</p>' : `
+          <table>
+            <thead>
+              <tr>
+                <th>Roll No</th>
+                <th>Name</th>
+                <th>Semester</th>
+                <th>Total Marks</th>
+                <th>Percentage</th>
+                <th>Grade</th>
+                <th>Total Fine</th>
+                <th>Dropout Subjects</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${report.map(r => `
+                <tr>
+                  <td><strong>${r.roll_no}</strong></td>
+                  <td>${r.fullname}</td>
+                  <td>${r.semester}</td>
+                  <td>${r.total || 0}</td>
+                  <td>${parseFloat(r.percentage || 0).toFixed(2)}%</td>
+                  <td><span class="badge ${r.grade?.toLowerCase()}">${r.grade || 'N/A'}</span></td>
+                  <td>PKR ${r.total_fine || 0}</td>
+                  <td>${r.dropout_subjects || 'None'}</td>
+                </tr>
+              `).join('')}
+            </tbody>
+          </table>
+        `;
+        document.getElementById('reportContainer').innerHTML = html;
+      } catch (error) {
+        document.getElementById('reportContainer').innerHTML = '<p class="no-data">Error loading report</p>';
+      }
+    }
+
+    // Load dashboard on page load
+    window.onload = () => {
+      loadDashboard();
+      loadStudents();
+    };
+  </script>
+</body>
+</html>
